@@ -1,3 +1,3 @@
 module github.com/kk-no/proto-terminal
 
-go 1.15
+go 1.20
