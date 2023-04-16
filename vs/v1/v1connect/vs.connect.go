@@ -29,6 +29,7 @@ const (
 type VSServiceClient interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
 	ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error)
+	GetUserWithGameResults(context.Context, *connect_go.Request[v1.GetUserWithGameResultsRequest]) (*connect_go.Response[v1.GetUserWithGameResultsResponse], error)
 }
 
 // NewVSServiceClient constructs a client for the vs.v1.VSService service. By default, it uses the
@@ -51,13 +52,19 @@ func NewVSServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts .
 			baseURL+"/vs.v1.VSService/ListUsers",
 			opts...,
 		),
+		getUserWithGameResults: connect_go.NewClient[v1.GetUserWithGameResultsRequest, v1.GetUserWithGameResultsResponse](
+			httpClient,
+			baseURL+"/vs.v1.VSService/GetUserWithGameResults",
+			opts...,
+		),
 	}
 }
 
 // vSServiceClient implements VSServiceClient.
 type vSServiceClient struct {
-	ping      *connect_go.Client[v1.PingRequest, v1.PingResponse]
-	listUsers *connect_go.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	ping                   *connect_go.Client[v1.PingRequest, v1.PingResponse]
+	listUsers              *connect_go.Client[v1.ListUsersRequest, v1.ListUsersResponse]
+	getUserWithGameResults *connect_go.Client[v1.GetUserWithGameResultsRequest, v1.GetUserWithGameResultsResponse]
 }
 
 // Ping calls vs.v1.VSService.Ping.
@@ -70,10 +77,16 @@ func (c *vSServiceClient) ListUsers(ctx context.Context, req *connect_go.Request
 	return c.listUsers.CallUnary(ctx, req)
 }
 
+// GetUserWithGameResults calls vs.v1.VSService.GetUserWithGameResults.
+func (c *vSServiceClient) GetUserWithGameResults(ctx context.Context, req *connect_go.Request[v1.GetUserWithGameResultsRequest]) (*connect_go.Response[v1.GetUserWithGameResultsResponse], error) {
+	return c.getUserWithGameResults.CallUnary(ctx, req)
+}
+
 // VSServiceHandler is an implementation of the vs.v1.VSService service.
 type VSServiceHandler interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
 	ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error)
+	GetUserWithGameResults(context.Context, *connect_go.Request[v1.GetUserWithGameResultsRequest]) (*connect_go.Response[v1.GetUserWithGameResultsResponse], error)
 }
 
 // NewVSServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -93,6 +106,11 @@ func NewVSServiceHandler(svc VSServiceHandler, opts ...connect_go.HandlerOption)
 		svc.ListUsers,
 		opts...,
 	))
+	mux.Handle("/vs.v1.VSService/GetUserWithGameResults", connect_go.NewUnaryHandler(
+		"/vs.v1.VSService/GetUserWithGameResults",
+		svc.GetUserWithGameResults,
+		opts...,
+	))
 	return "/vs.v1.VSService/", mux
 }
 
@@ -105,4 +123,8 @@ func (UnimplementedVSServiceHandler) Ping(context.Context, *connect_go.Request[v
 
 func (UnimplementedVSServiceHandler) ListUsers(context.Context, *connect_go.Request[v1.ListUsersRequest]) (*connect_go.Response[v1.ListUsersResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("vs.v1.VSService.ListUsers is not implemented"))
+}
+
+func (UnimplementedVSServiceHandler) GetUserWithGameResults(context.Context, *connect_go.Request[v1.GetUserWithGameResultsRequest]) (*connect_go.Response[v1.GetUserWithGameResultsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("vs.v1.VSService.GetUserWithGameResults is not implemented"))
 }
