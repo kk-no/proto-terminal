@@ -21,88 +21,88 @@ import (
 const _ = connect_go.IsAtLeastVersion0_1_0
 
 const (
-	// VSServiceName is the fully-qualified name of the VSService service.
-	VSServiceName = "shadan.v1.VSService"
+	// ShadanServiceName is the fully-qualified name of the ShadanService service.
+	ShadanServiceName = "shadan.v1.ShadanService"
 )
 
-// VSServiceClient is a client for the shadan.v1.VSService service.
-type VSServiceClient interface {
+// ShadanServiceClient is a client for the shadan.v1.ShadanService service.
+type ShadanServiceClient interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
 
-// NewVSServiceClient constructs a client for the shadan.v1.VSService service. By default, it uses
-// the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and sends
-// uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or
-// connect.WithGRPCWeb() options.
+// NewShadanServiceClient constructs a client for the shadan.v1.ShadanService service. By default,
+// it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses, and
+// sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the connect.WithGRPC()
+// or connect.WithGRPCWeb() options.
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewVSServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) VSServiceClient {
+func NewShadanServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) ShadanServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	return &vSServiceClient{
+	return &shadanServiceClient{
 		ping: connect_go.NewClient[v1.PingRequest, v1.PingResponse](
 			httpClient,
-			baseURL+"/shadan.v1.VSService/Ping",
+			baseURL+"/shadan.v1.ShadanService/Ping",
 			opts...,
 		),
 		listUserRanking: connect_go.NewClient[v1.ListUserRankingRequest, v1.ListUserRankingResponse](
 			httpClient,
-			baseURL+"/shadan.v1.VSService/ListUserRanking",
+			baseURL+"/shadan.v1.ShadanService/ListUserRanking",
 			opts...,
 		),
 	}
 }
 
-// vSServiceClient implements VSServiceClient.
-type vSServiceClient struct {
+// shadanServiceClient implements ShadanServiceClient.
+type shadanServiceClient struct {
 	ping            *connect_go.Client[v1.PingRequest, v1.PingResponse]
 	listUserRanking *connect_go.Client[v1.ListUserRankingRequest, v1.ListUserRankingResponse]
 }
 
-// Ping calls shadan.v1.VSService.Ping.
-func (c *vSServiceClient) Ping(ctx context.Context, req *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
+// Ping calls shadan.v1.ShadanService.Ping.
+func (c *shadanServiceClient) Ping(ctx context.Context, req *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
 	return c.ping.CallUnary(ctx, req)
 }
 
-// ListUserRanking calls shadan.v1.VSService.ListUserRanking.
-func (c *vSServiceClient) ListUserRanking(ctx context.Context, req *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error) {
+// ListUserRanking calls shadan.v1.ShadanService.ListUserRanking.
+func (c *shadanServiceClient) ListUserRanking(ctx context.Context, req *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error) {
 	return c.listUserRanking.CallUnary(ctx, req)
 }
 
-// VSServiceHandler is an implementation of the shadan.v1.VSService service.
-type VSServiceHandler interface {
+// ShadanServiceHandler is an implementation of the shadan.v1.ShadanService service.
+type ShadanServiceHandler interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
 
-// NewVSServiceHandler builds an HTTP handler from the service implementation. It returns the path
-// on which to mount the handler and the handler itself.
+// NewShadanServiceHandler builds an HTTP handler from the service implementation. It returns the
+// path on which to mount the handler and the handler itself.
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewVSServiceHandler(svc VSServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
+func NewShadanServiceHandler(svc ShadanServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
 	mux := http.NewServeMux()
-	mux.Handle("/shadan.v1.VSService/Ping", connect_go.NewUnaryHandler(
-		"/shadan.v1.VSService/Ping",
+	mux.Handle("/shadan.v1.ShadanService/Ping", connect_go.NewUnaryHandler(
+		"/shadan.v1.ShadanService/Ping",
 		svc.Ping,
 		opts...,
 	))
-	mux.Handle("/shadan.v1.VSService/ListUserRanking", connect_go.NewUnaryHandler(
-		"/shadan.v1.VSService/ListUserRanking",
+	mux.Handle("/shadan.v1.ShadanService/ListUserRanking", connect_go.NewUnaryHandler(
+		"/shadan.v1.ShadanService/ListUserRanking",
 		svc.ListUserRanking,
 		opts...,
 	))
-	return "/shadan.v1.VSService/", mux
+	return "/shadan.v1.ShadanService/", mux
 }
 
-// UnimplementedVSServiceHandler returns CodeUnimplemented from all methods.
-type UnimplementedVSServiceHandler struct{}
+// UnimplementedShadanServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedShadanServiceHandler struct{}
 
-func (UnimplementedVSServiceHandler) Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.VSService.Ping is not implemented"))
+func (UnimplementedShadanServiceHandler) Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.Ping is not implemented"))
 }
 
-func (UnimplementedVSServiceHandler) ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.VSService.ListUserRanking is not implemented"))
+func (UnimplementedShadanServiceHandler) ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.ListUserRanking is not implemented"))
 }
