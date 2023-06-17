@@ -28,6 +28,7 @@ const (
 // ShadanServiceClient is a client for the shadan.v1.ShadanService service.
 type ShadanServiceClient interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
+	GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
 
@@ -46,6 +47,11 @@ func NewShadanServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 			baseURL+"/shadan.v1.ShadanService/Ping",
 			opts...,
 		),
+		getTeam: connect_go.NewClient[v1.GetTeamRequest, v1.GetTeamResponse](
+			httpClient,
+			baseURL+"/shadan.v1.ShadanService/GetTeam",
+			opts...,
+		),
 		listUserRanking: connect_go.NewClient[v1.ListUserRankingRequest, v1.ListUserRankingResponse](
 			httpClient,
 			baseURL+"/shadan.v1.ShadanService/ListUserRanking",
@@ -57,12 +63,18 @@ func NewShadanServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 // shadanServiceClient implements ShadanServiceClient.
 type shadanServiceClient struct {
 	ping            *connect_go.Client[v1.PingRequest, v1.PingResponse]
+	getTeam         *connect_go.Client[v1.GetTeamRequest, v1.GetTeamResponse]
 	listUserRanking *connect_go.Client[v1.ListUserRankingRequest, v1.ListUserRankingResponse]
 }
 
 // Ping calls shadan.v1.ShadanService.Ping.
 func (c *shadanServiceClient) Ping(ctx context.Context, req *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
 	return c.ping.CallUnary(ctx, req)
+}
+
+// GetTeam calls shadan.v1.ShadanService.GetTeam.
+func (c *shadanServiceClient) GetTeam(ctx context.Context, req *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error) {
+	return c.getTeam.CallUnary(ctx, req)
 }
 
 // ListUserRanking calls shadan.v1.ShadanService.ListUserRanking.
@@ -73,6 +85,7 @@ func (c *shadanServiceClient) ListUserRanking(ctx context.Context, req *connect_
 // ShadanServiceHandler is an implementation of the shadan.v1.ShadanService service.
 type ShadanServiceHandler interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
+	GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
 
@@ -88,6 +101,11 @@ func NewShadanServiceHandler(svc ShadanServiceHandler, opts ...connect_go.Handle
 		svc.Ping,
 		opts...,
 	))
+	mux.Handle("/shadan.v1.ShadanService/GetTeam", connect_go.NewUnaryHandler(
+		"/shadan.v1.ShadanService/GetTeam",
+		svc.GetTeam,
+		opts...,
+	))
 	mux.Handle("/shadan.v1.ShadanService/ListUserRanking", connect_go.NewUnaryHandler(
 		"/shadan.v1.ShadanService/ListUserRanking",
 		svc.ListUserRanking,
@@ -101,6 +119,10 @@ type UnimplementedShadanServiceHandler struct{}
 
 func (UnimplementedShadanServiceHandler) Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.Ping is not implemented"))
+}
+
+func (UnimplementedShadanServiceHandler) GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.GetTeam is not implemented"))
 }
 
 func (UnimplementedShadanServiceHandler) ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error) {
