@@ -28,6 +28,7 @@ const (
 // ShadanServiceClient is a client for the shadan.v1.ShadanService service.
 type ShadanServiceClient interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
+	GetLeague(context.Context, *connect_go.Request[v1.GetLeagueRequest]) (*connect_go.Response[v1.GetLeagueResponse], error)
 	GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
@@ -47,6 +48,11 @@ func NewShadanServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 			baseURL+"/shadan.v1.ShadanService/Ping",
 			opts...,
 		),
+		getLeague: connect_go.NewClient[v1.GetLeagueRequest, v1.GetLeagueResponse](
+			httpClient,
+			baseURL+"/shadan.v1.ShadanService/GetLeague",
+			opts...,
+		),
 		getTeam: connect_go.NewClient[v1.GetTeamRequest, v1.GetTeamResponse](
 			httpClient,
 			baseURL+"/shadan.v1.ShadanService/GetTeam",
@@ -63,6 +69,7 @@ func NewShadanServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 // shadanServiceClient implements ShadanServiceClient.
 type shadanServiceClient struct {
 	ping            *connect_go.Client[v1.PingRequest, v1.PingResponse]
+	getLeague       *connect_go.Client[v1.GetLeagueRequest, v1.GetLeagueResponse]
 	getTeam         *connect_go.Client[v1.GetTeamRequest, v1.GetTeamResponse]
 	listUserRanking *connect_go.Client[v1.ListUserRankingRequest, v1.ListUserRankingResponse]
 }
@@ -70,6 +77,11 @@ type shadanServiceClient struct {
 // Ping calls shadan.v1.ShadanService.Ping.
 func (c *shadanServiceClient) Ping(ctx context.Context, req *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
 	return c.ping.CallUnary(ctx, req)
+}
+
+// GetLeague calls shadan.v1.ShadanService.GetLeague.
+func (c *shadanServiceClient) GetLeague(ctx context.Context, req *connect_go.Request[v1.GetLeagueRequest]) (*connect_go.Response[v1.GetLeagueResponse], error) {
+	return c.getLeague.CallUnary(ctx, req)
 }
 
 // GetTeam calls shadan.v1.ShadanService.GetTeam.
@@ -85,6 +97,7 @@ func (c *shadanServiceClient) ListUserRanking(ctx context.Context, req *connect_
 // ShadanServiceHandler is an implementation of the shadan.v1.ShadanService service.
 type ShadanServiceHandler interface {
 	Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error)
+	GetLeague(context.Context, *connect_go.Request[v1.GetLeagueRequest]) (*connect_go.Response[v1.GetLeagueResponse], error)
 	GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error)
 	ListUserRanking(context.Context, *connect_go.Request[v1.ListUserRankingRequest]) (*connect_go.Response[v1.ListUserRankingResponse], error)
 }
@@ -99,6 +112,11 @@ func NewShadanServiceHandler(svc ShadanServiceHandler, opts ...connect_go.Handle
 	mux.Handle("/shadan.v1.ShadanService/Ping", connect_go.NewUnaryHandler(
 		"/shadan.v1.ShadanService/Ping",
 		svc.Ping,
+		opts...,
+	))
+	mux.Handle("/shadan.v1.ShadanService/GetLeague", connect_go.NewUnaryHandler(
+		"/shadan.v1.ShadanService/GetLeague",
+		svc.GetLeague,
 		opts...,
 	))
 	mux.Handle("/shadan.v1.ShadanService/GetTeam", connect_go.NewUnaryHandler(
@@ -119,6 +137,10 @@ type UnimplementedShadanServiceHandler struct{}
 
 func (UnimplementedShadanServiceHandler) Ping(context.Context, *connect_go.Request[v1.PingRequest]) (*connect_go.Response[v1.PingResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.Ping is not implemented"))
+}
+
+func (UnimplementedShadanServiceHandler) GetLeague(context.Context, *connect_go.Request[v1.GetLeagueRequest]) (*connect_go.Response[v1.GetLeagueResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("shadan.v1.ShadanService.GetLeague is not implemented"))
 }
 
 func (UnimplementedShadanServiceHandler) GetTeam(context.Context, *connect_go.Request[v1.GetTeamRequest]) (*connect_go.Response[v1.GetTeamResponse], error) {
